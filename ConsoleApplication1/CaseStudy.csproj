@@ -7,8 +7,8 @@
     <ProjectGuid>{06598DA8-1FDE-4AC0-99D6-E55DB18BE969}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ConsoleApplication1</RootNamespace>
-    <AssemblyName>ConsoleApplication1</AssemblyName>
+    <RootNamespace>CaseStudy</RootNamespace>
+    <AssemblyName>CaseStudy</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

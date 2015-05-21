@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ConsoleApplication1
+namespace CaseStudy
 {
     class Program
     {
@@ -15,22 +15,35 @@ namespace ConsoleApplication1
 
         static void Main(string[] args)
         {
-            if((0 == args.Count()) || (args.Count() > 2))
+            switch (args.Count())
             {
-                Console.WriteLine("One or Two parameters only.");
-                Environment.Exit(-1);
+                case 0: { Console.WriteLine("No parameters. Exit."); break; }
+                case 1: { CaseOne(args); break; }
+                case 2: { CaseTwo(args); ; break; }
+                default: { Console.WriteLine("One or Two parameters only."); ; break; }
             }
-
+        }
+        static void CaseOne(string[] args)
+        {
             var repoList = GetRepository(args[0]);
             ListRepository(repoList);
             GetStarred(repoList);
-  
         }
-
-        static void GetStarred(Task<IReadOnlyList<Repository>> repository)
+        static void CaseTwo(string[] args)
         {
-            int starred = repository.Result.Count(n => n.StargazersCount > 0);
-            Console.WriteLine("Starred: {0}",starred);
+            var repoListOne = GetRepository(args[0]);
+            var repoListTwo = GetRepository(args[1]);
+            int starredOne = GetStarred(repoListOne);
+            int starredTwo = GetStarred(repoListTwo);
+
+            Console.WriteLine("{0}: {1} starred repositories.", args[0], starredOne);
+            Console.WriteLine("{0}: {1} starred repositories.", args[1], starredTwo);
+            Console.WriteLine((starredOne == starredTwo ? "Equal." : (starredOne > starredTwo ? "First repository has more stars." : "Second repository has more stars.")));
+        }
+        static int GetStarred(Task<IReadOnlyList<Repository>> repository)
+        {
+            return repository.Result.Count(n => n.StargazersCount > 0);
+            
         }
        static Task<IReadOnlyList<Repository>> GetRepository(string userName)
         {
