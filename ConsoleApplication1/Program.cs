@@ -39,37 +39,4 @@ namespace CaseStudy
             Console.WriteLine((starredOne == starredTwo ? "Equal." : (starredOne > starredTwo ? "First repository has more stars." : "Second repository has more stars.")));
         }
     }
-    public class GitHub
-    {
-        private static Lazy<GitHubClient> client = new Lazy<GitHubClient>(() => new GitHubClient(new ProductHeaderValue("CaseStudy")));
-        public static GitHubClient Client { get { return client.Value; } }
-        public int GetStarred(Task<IReadOnlyList<Repository>> repository)
-        {
-            return repository.Result.Count(n => n.StargazersCount > 0);
-        }
-        public Task<IReadOnlyList<Repository>> GetRepository(string userName)
-        {
-            var repository = Client.Repository.GetAllForUser(userName);
-            repository.Wait();
-            return repository;
-        }
-    }
-    static class Routines
-    {
-        public static void ListStarred(int starred, string name)
-        {
-            Console.WriteLine("{0} starred repositories for user: {1}",starred, name);
-        }
-        public static void ListRepository(Task<IReadOnlyList<Repository>> repository)
-        {
-            Console.WriteLine("");
-            Console.WriteLine("Repository list: ");
-            foreach (Repository repo in repository.Result)
-            {
-                Console.WriteLine(repo.Name);
-            }
-            Console.WriteLine("");
-        }
-    }
-
 }
