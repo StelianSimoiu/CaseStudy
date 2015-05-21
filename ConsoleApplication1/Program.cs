@@ -10,9 +10,7 @@ namespace CaseStudy
 {
     class Program
     {
-        private static Lazy<GitHubClient> github = new Lazy<GitHubClient>(() => new GitHubClient(new ProductHeaderValue("CaseStudy")));
-        public static GitHubClient GitHub { get { return github.Value; } }
-
+        static GitHub Git = new GitHub();
         static void Main(string[] args)
         {
             switch (args.Count())
@@ -25,40 +23,53 @@ namespace CaseStudy
         }
         static void CaseOne(string[] args)
         {
-            var repoList = GetRepository(args[0]);
-            ListRepository(repoList);
-            GetStarred(repoList);
+            var repoList = Git.GetRepository(args[0]);
+            Routines.ListRepository(repoList);
         }
         static void CaseTwo(string[] args)
         {
-            var repoListOne = GetRepository(args[0]);
-            var repoListTwo = GetRepository(args[1]);
-            int starredOne = GetStarred(repoListOne);
-            int starredTwo = GetStarred(repoListTwo);
+            var repoListOne = Git.GetRepository(args[0]);
+            var repoListTwo = Git.GetRepository(args[1]);
+            int starredOne = Git.GetStarred(repoListOne);
+            int starredTwo = Git.GetStarred(repoListTwo);
 
-            Console.WriteLine("{0}: {1} starred repositories.", args[0], starredOne);
-            Console.WriteLine("{0}: {1} starred repositories.", args[1], starredTwo);
+            Routines.ListStarred(starredOne, args[0]);
+            Routines.ListStarred(starredTwo, args[1]);
+
             Console.WriteLine((starredOne == starredTwo ? "Equal." : (starredOne > starredTwo ? "First repository has more stars." : "Second repository has more stars.")));
         }
-        static int GetStarred(Task<IReadOnlyList<Repository>> repository)
+    }
+    public class GitHub
+    {
+        private static Lazy<GitHubClient> client = new Lazy<GitHubClient>(() => new GitHubClient(new ProductHeaderValue("CaseStudy")));
+        public static GitHubClient Client { get { return client.Value; } }
+        public int GetStarred(Task<IReadOnlyList<Repository>> repository)
         {
             return repository.Result.Count(n => n.StargazersCount > 0);
-            
         }
-       static Task<IReadOnlyList<Repository>> GetRepository(string userName)
+        public Task<IReadOnlyList<Repository>> GetRepository(string userName)
         {
-            var repository = GitHub.Repository.GetAllForUser(userName);
+            var repository = Client.Repository.GetAllForUser(userName);
             repository.Wait();
             return repository;
         }
-        static void ListRepository(Task<IReadOnlyList<Repository>> repository)
-       {
-           Console.WriteLine("Repository list: ");
-           foreach (Repository repo in repository.Result)
-           {
-               Console.WriteLine(repo.Name);
-           }
-           Console.WriteLine("");
-       }
     }
+    static class Routines
+    {
+        public static void ListStarred(int starred, string name)
+        {
+            Console.WriteLine("{0} starred repositories for user: {1}",starred, name);
+        }
+        public static void ListRepository(Task<IReadOnlyList<Repository>> repository)
+        {
+            Console.WriteLine("");
+            Console.WriteLine("Repository list: ");
+            foreach (Repository repo in repository.Result)
+            {
+                Console.WriteLine(repo.Name);
+            }
+            Console.WriteLine("");
+        }
+    }
+
 }
